@@ -16,7 +16,12 @@ func main() {
 	pdf = header(pdf, []string{"1st column", "2nd", "3rd", "4th", "5th", "6th"})
 
 	// pdf table content
-	pdf = table(pdf)
+	data := [][]string{
+		{"1 1", "1 2", "1 3", "1 4", "1 5", "1 5"},
+		{"2 1", "2 2", "2 3", "2 4", "2 5", "2 5"},
+	}
+
+	pdf = table(pdf, data)
 
 	if pdf.Err() {
 		log.Fatalf("failed! %s", pdf.Error())
@@ -57,19 +62,19 @@ func header(pdf *gofpdf.Fpdf, headerText []string) *gofpdf.Fpdf {
 	return pdf
 }
 
-func table(pdf *gofpdf.Fpdf) *gofpdf.Fpdf {
+func table(pdf *gofpdf.Fpdf, tbl [][]string) *gofpdf.Fpdf {
 
 	pdf.SetFont("Times", "", 10)
 	pdf.SetFillColor(255, 255, 255)
 
-	pdf.CellFormat(40, 10, "text", "1", 0, "L", false, 0, "")
-	pdf.CellFormat(40, 10, "same", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(40, 10, "text", "1", 0, "L", false, 0, "")
-	pdf.CellFormat(40, 10, "text", "1", 0, "R", false, 0, "")
-	pdf.CellFormat(40, 10, "text", "1", 0, "R", false, 0, "")
-	pdf.CellFormat(40, 10, "text", "1", 0, "R", false, 0, "")
+	align := []string{"L", "L", "L", "L", "L", "L"}
 
+	for _, line := range tbl {
+		for i, str := range line {
+			pdf.CellFormat(40, 10, str, "1", 0, align[i], false, 0, "")
+		}
+		pdf.Ln(-1)
+	}
 	pdf.Ln(-1)
-
 	return pdf
 }
